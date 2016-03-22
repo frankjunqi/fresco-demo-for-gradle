@@ -13,7 +13,9 @@
 package com.facebook.samples.comparison.adapters;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
+import com.facebook.samples.comparison.R;
 import com.squareup.picasso.Picasso;
 
 import com.facebook.samples.comparison.Drawables;
@@ -21,41 +23,44 @@ import com.facebook.samples.comparison.configs.picasso.SamplePicassoFactory;
 import com.facebook.samples.comparison.instrumentation.InstrumentedImageView;
 import com.facebook.samples.comparison.instrumentation.PerfListener;
 
-/** Populate the list view with images using the Picasso library. */
+/**
+ * Populate the list view with images using the Picasso library.
+ */
 public class PicassoAdapter extends ImageListAdapter<InstrumentedImageView> {
-  private final Picasso mPicasso;
+    private final Picasso mPicasso;
+    private Context mContext;
 
-  public PicassoAdapter(Context context, int resourceId, PerfListener perfListener) {
-    super(context, resourceId, perfListener);
-    mPicasso = SamplePicassoFactory.getPicasso(context);
-  }
-
-  @Override
-  protected Class<InstrumentedImageView> getViewClass() {
-    return InstrumentedImageView.class;
-  }
-
-  @Override
-  protected InstrumentedImageView createView() {
-    return new InstrumentedImageView(getContext());
-  }
-
-  @Override
-  protected void bind(InstrumentedImageView view, String uri) {
-    mPicasso
-        .load(uri)
-        .placeholder(Drawables.sPlaceholderDrawable)
-        .error(Drawables.sErrorDrawable)
-        .fit()
-        .into(view);
-  }
-
-  @Override
-  public void shutDown() {
-    for (int i = 0; i < getCount(); i++) {
-      String uri = getItem(i);
-      mPicasso.invalidate(uri);
+    public PicassoAdapter(Context context, int resourceId, PerfListener perfListener) {
+        super(context, resourceId, perfListener);
+        this.mContext = context;
+        mPicasso = SamplePicassoFactory.getPicasso(context);
     }
-    super.clear();
-  }
+
+    @Override
+    protected Class<InstrumentedImageView> getViewClass() {
+        return InstrumentedImageView.class;
+    }
+
+    @Override
+    protected InstrumentedImageView createView() {
+        return new InstrumentedImageView(getContext());
+    }
+
+    @Override
+    protected void bind(InstrumentedImageView view, String uri) {
+        mPicasso
+                .load(uri)
+                .placeholder(Drawables.sPlaceholderDrawable)
+                .error(Drawables.sErrorDrawable)
+                .into(view);
+    }
+
+    @Override
+    public void shutDown() {
+        for (int i = 0; i < getCount(); i++) {
+            String uri = getItem(i);
+            mPicasso.invalidate(uri);
+        }
+        super.clear();
+    }
 }
